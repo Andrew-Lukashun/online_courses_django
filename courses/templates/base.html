@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Study Platform{% endblock %}</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-wrapper {
+            flex: 1;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .navbar-custom {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .footer-custom {
+            background-color: #ffffff;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header class="p-3 bg-dark text-white navbar-custom">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                <a href="{% url 'courses' %}" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none fw-bold fs-4 me-4">
+                     Andrey's courses
+                </a>
+
+                <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                    <li><a href="{% url 'courses' %}" class="nav-link px-3 text-white">Главная</a></li>
+                    <li><a href="{% url 'create-course' %}" class="nav-link px-3 text-white">Создать курс</a></li>
+                </ul>
+
+                <div class="text-end d-flex align-items-center">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="btn btn-outline-light me-2 rounded-pill px-4">Вход</a>
+                        <a href="{% url 'register' %}" class="btn btn-warning rounded-pill px-4">Регистрация</a>
+                    {% else %}
+                        <span class="me-3 text-white-50">Привет, <strong>{{ user.username }}</strong></span>
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-warning btn-sm rounded-pill px-3">Выйти</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer class="py-4 footer-custom border-top">
+        <div class="container">
+            <ul class="nav justify-content-center mb-3">
+                <li class="nav-item"><a href="{% url 'courses' %}" class="nav-link px-2 text-muted">Курсы</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Помощь</a></li>
+                <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">О проекте</a></li>
+            </ul>
+            <p class="text-center text-muted mb-0">© 2026 LearnSpace Study Group</p>
+        </div>
+    </footer>
+</body>
+</html>

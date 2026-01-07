@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+    /* Плавное всплытие карточки */
+    .course-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: none;
+        border-radius: 15px;
+    }
+    .course-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .card-header-accent {
+        height: 8px;
+        background: #ffc107; /* Цвет под твою кнопку Sign-up */
+        border-radius: 15px 15px 0 0;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="fw-bold">Explore Courses</h2>
+            <p class="text-muted">Discover something new today</p>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for course in page_obj %}
+        <div class="col">
+            <div class="card h-100 shadow-sm course-card">
+                <div class="card-header-accent"></div>
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="mb-2">
+                        <span class="badge bg-dark-subtle text-dark border rounded-pill px-3 small">Course</span>
+                    </div>
+                    <h4 class="card-title fw-bold">{{ course.title }}</h4>
+                    <p class="card-text text-muted flex-grow-1">
+                        {{ course.description|truncatewords:15 }}
+                    </p>
+                    <div class="mt-4">
+                        <a href="{% url 'course-details' course.id %}" class="btn btn-dark w-100 rounded-pill py-2">
+                            Details →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <h3 class="text-muted">No courses found yet...</h3>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="d-flex justify-content-center mt-5">
+    {% include 'pagination.html' with page_obj=page_obj %}
+</div>
+
+{% endblock %}
