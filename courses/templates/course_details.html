@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Course Details{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="mb-4">
+        <a href="{% url 'update-course' course.id %}" class="btn btn-sm btn-outline-secondary">Update Info</a>
+        <form method="POST" action="{% url 'delete-course' course.id %}" style="display: inline;">
+            {% csrf_token %}
+            <input type="hidden" name="course_id" value="{{course.id}}">
+            <input type="submit" value="Delete Course" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+        </form>
+    </div>
+
+    <div class="p-4 mb-4 bg-white border rounded shadow-sm">
+        <h1 class="display-6 fw-bold text-dark">{{ course.title }}</h1>
+        <p class="lead text-muted">{{ course.description }}</p>
+        <a href="{% url 'create-course-part' course.id %}" class="btn btn-warning btn-sm fw-bold">+ Add Part</a>
+    </div>
+
+    <h2 class="h4 fw-bold mb-3">Course Structure</h2>
+
+    <ul class="list-group list-group-flush shadow-sm rounded border">
+        {% for part in course.parts.all %}
+            <li class="list-group-item p-4">
+                <div class="d-flex justify-content-between">
+                    <strong class="fs-5 text-primary"> {{ part.title }}</strong>
+                    <a href="{% url 'create-course-topic' course.id part.id %}" class="btn btn-link btn-sm text-success text-decoration-none">+ Add Topic</a>
+                </div>
+
+                <ul class="list-unstyled mt-3 ms-4">
+                    {% for topic in part.topics.all %}
+                        <li class="mb-4 p-3 bg-light rounded border-start border-4 border-warning">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">{{ topic.title }}</span>
+                                <a href="{% url 'create-topic-document' course.id part.id topic.id %}" class="btn btn-sm btn-outline-primary py-0">upload file</a>
+                            </div>
+
+                            <ul class="mt-2 small text-muted">
+                                {% for document in topic.documents.all %}
+                                    <li class="py-1 border-top d-flex justify-content-between align-items-center">
+                                        <a href="{{ document.file.url }}" target="_blank" class="text-decoration-none">📄 {{ document.name }}</a>
+                                        <div class="btn-group">
+                                            <a href="{% url 'update-topic-document' course.id part.id topic.id document.id %}" class="btn btn-sm text-secondary text-decoration-none">Edit</a>
+                                            <form method="post" action="{% url 'delete-topic-document' course.id part.id topic.id document.id %}" style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" onclick="return confirm('Delete?');" class="btn btn-sm text-danger border-0 bg-transparent" style="text-decoration: underline;">Delete</button>
+                                            </form>
+                                        </div>
+                                    </li>
+                                {% empty %}
+                                    <li class="mt-2"><em>No documents yet</em></li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% empty %}
+                        <li class="text-muted"><em>No topics in this part</em></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% empty %}
+            <li class="list-group-item"><em>No parts created yet</em></li>
+        {% endfor %}
+    </ul>
+
+    <div class="mt-4 pb-5">
+        <a href="{% url 'courses' %}" class="btn btn-dark btn-sm px-4">← Back to Courses</a>
+    </div>
+</div>
+{% endblock %}
